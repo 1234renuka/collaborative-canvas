@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>Collaborative Canvas</title>
+    <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+<div id="app">
+
+    <!-- JOIN PANEL -->
+    <div class="join-panel">
+        <input id="roomId" type="text" placeholder="Room ID (default: lobby)">
+        <input id="username" type="text" placeholder="Your name">
+        <button id="joinBtn">Join</button>
+    </div>
+
+    <!-- TOOLBAR -->
+    <div class="toolbar">
+        <label>Tool:</label>
+        <select id="toolSelect">
+            <option value="brush">Brush</option>
+            <option value="eraser">Eraser</option>
+        </select>
+
+        <label>Color:</label>
+        <input type="color" id="colorPicker" value="#000000" />
+
+        <label>Width:</label>
+        <input type="range" id="widthRange" min="1" max="20" value="4" />
+
+        <button id="undoBtn">Undo</button>
+        <button id="redoBtn">Redo</button>
+    </div>
+
+    <!-- CANVAS -->
+    <div id="canvas-wrap">
+        <canvas id="drawCanvas"></canvas>
+    </div>
+
+    <!-- SIDEBAR -->
+    <div class="sidebar">
+
+        <h3>Users Online</h3>
+        <ul id="userList" class="user-list"></ul>
+
+        <h3 style="margin-top:20px;">Show Drawings</h3>
+        <select id="filterSelect" class="user-filter">
+            <option value="everyone">Everyone</option>
+            <option value="me">Me Only</option>
+        </select>
+
+    </div>
+
+</div>
+
+<script src="/socket.io/socket.io.js"></script>
+<script src="websocket.js"></script>
+<script src="canvas.js"></script>
+<script src="main.js"></script>
+
+</body>
+</html>
