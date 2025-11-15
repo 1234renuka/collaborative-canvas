@@ -16,12 +16,10 @@ io.on('connection', socket => {
 
   // USER JOINS A ROOM
   socket.on('join', ({ roomId, username }, ack) => {
-    // normalize room + username
     roomId = (roomId || 'lobby').trim().toLowerCase();
     username = (username || 'Guest').trim() || 'Guest';
 
     joinedRoom = roomId;
-
     socket.join(roomId);
 
     rooms.addUser(roomId, socket, username);
@@ -34,17 +32,16 @@ io.on('connection', socket => {
     io.to(roomId).emit('users', rooms.listUsers(roomId));
   });
 
-  // REAL-TIME STROKE PROGRESS (while drawing)
+  // REAL-TIME STROKE PROGRESS
   socket.on('clientStrokeProgress', ({ roomId, stroke }) => {
     roomId = (roomId || 'lobby').trim().toLowerCase();
-    // send only to other users
     socket.to(roomId).emit('strokeProgress', {
       userId: socket.id,
       stroke
     });
   });
 
-  // USER ENDS A STROKE → ADD ACTION
+  // USER ENDS A STROKE
   socket.on('clientStrokeEnd', ({ roomId, stroke }) => {
     roomId = (roomId || 'lobby').trim().toLowerCase();
 
@@ -58,13 +55,12 @@ io.on('connection', socket => {
     });
   });
 
-  // REMOTE CURSOR MOVEMENT (you can hook this up later)
+  // REMOTE CURSOR MOVEMENT (optional)
   socket.on('cursor', ({ roomId, x, y }) => {
     roomId = (roomId || 'lobby').trim().toLowerCase();
     io.to(roomId).emit('cursor', {
       userId: socket.id,
-      x,
-      y
+      x, y
     });
   });
 
@@ -103,16 +99,24 @@ io.on('connection', socket => {
   });
 });
 
-// AUTO OPEN BROWSER
-server.listen(3000, async () => {
-  console.log('Server running on http://localhost:3000');
 
-  // Use dynamic import for ES module "open"
-  const open = (await import('open')).default;
+// ------------------------------------------
+// FIX FOR RENDER DEPLOYMENT
+// ------------------------------------------
 
-  try {
-    await open('http://localhost:3000');
-  } catch (err) {
-    console.error('Could not open browser:', err);
+const PORT = process.env.PORT || 3000;
+
+server.listen(PORT, async () => {
+  console.log("Server running on port", PORT);
+
+  // Only auto-open browser on LOCAL (port 3000)
+  if (PORT === 3000) {
+    const open = (await import('open')).default;
+
+    try {
+      await open("http://localhost:3000");
+    } catch (err) {
+      console.error("Could not open browser:", err);
+    }
   }
 });
